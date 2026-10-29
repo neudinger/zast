@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="1237" viewBox="0 0 1280 1237" role="img" aria-labelledby="title description">
+<title id="title">Reuse a function as a struct member.</title>
+<desc id="description">A Reading struct contains value and a get method using an explicit self parameter. Both panes are complete snippets; use the README runner for the description.</desc>
+<style>
+text { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+.source, .output { font-family: 'SFMono-Regular', Menlo, Consolas, monospace; font-size: 17px; fill: #f1f4ee; }
+</style>
+<rect width="1280" height="1237" rx="20" fill="#0b1613"/>
+<text x="32" y="48" fill="#f1f4ee" font-size="24" font-weight="600">Reuse a function as a struct member.</text>
+<text x="1248" y="47" text-anchor="end" fill="#bac4be" font-size="13" letter-spacing="2">ZAST / STRUCT + METHOD</text>
+<rect x="32" y="80" width="650" height="1095" rx="12" fill="#0c1714" stroke="#35463e"/>
+<rect x="742" y="80" width="506" height="1095" rx="12" fill="#0c1714" stroke="#35463e"/>
+<text x="60" y="119" fill="#a1f0d0" font-size="15" font-weight="600">01 / DESCRIBE</text>
+<text x="770" y="119" fill="#a1f0d0" font-size="15" font-weight="600">02 / RENDER</text>
+<path d="M32 143H682 M742 143H1248" stroke="#35463e"/>
+<text class="source" x="60" y="181" xml:space="preserve"><tspan fill="#d29aef">const</tspan> self_type: <tspan fill="#d29aef">zast</tspan>.<tspan fill="#d29aef">Expression</tspan> = .{</text>
+<text class="source" x="60" y="206" xml:space="preserve">    .builtin_call = .{ .name = <tspan fill="#f29baf">"@This"</tspan> },</text>
+<text class="source" x="60" y="231" xml:space="preserve">};</text>
+<text class="source" x="60" y="256" xml:space="preserve"><tspan fill="#d29aef">const</tspan> receiver: <tspan fill="#d29aef">zast</tspan>.<tspan fill="#d29aef">Expression</tspan> = .{</text>
+<text class="source" x="60" y="281" xml:space="preserve">    .identifier = <tspan fill="#f29baf">"self"</tspan>,</text>
+<text class="source" x="60" y="306" xml:space="preserve">};</text>
+<text class="source" x="60" y="331" xml:space="preserve"><tspan fill="#d29aef">const</tspan> getter: <tspan fill="#d29aef">zast</tspan>.<tspan fill="#d29aef">FunctionDeclaration</tspan> = .{</text>
+<text class="source" x="60" y="356" xml:space="preserve">    .parameters = &amp;.{.{</text>
+<text class="source" x="60" y="381" xml:space="preserve">        .name = <tspan fill="#f29baf">"self"</tspan>,</text>
+<text class="source" x="60" y="406" xml:space="preserve">        .type_expression = .{ .pointer_type = .{</text>
+<text class="source" x="60" y="431" xml:space="preserve">            .child_type = &amp;self_type,</text>
+<text class="source" x="60" y="456" xml:space="preserve">            .is_const = <tspan fill="#d29aef">true</tspan>,</text>
+<text class="source" x="60" y="481" xml:space="preserve">        } },</text>
+<text class="source" x="60" y="506" xml:space="preserve">    }},</text>
+<text class="source" x="60" y="531" xml:space="preserve">    .return_type = .{ .identifier = <tspan fill="#f29baf">"u32"</tspan> },</text>
+<text class="source" x="60" y="556" xml:space="preserve">    .body = .{ .statements = &amp;.{.{</text>
+<text class="source" x="60" y="581" xml:space="preserve">        .return_value = .{ .field_access = .{</text>
+<text class="source" x="60" y="606" xml:space="preserve">            .base = &amp;receiver,</text>
+<text class="source" x="60" y="631" xml:space="preserve">            .name = <tspan fill="#f29baf">"value"</tspan>,</text>
+<text class="source" x="60" y="656" xml:space="preserve">        } },</text>
+<text class="source" x="60" y="681" xml:space="preserve">    }} },</text>
+<text class="source" x="60" y="706" xml:space="preserve">};</text>
+<text class="source" x="60" y="731" xml:space="preserve"><tspan fill="#d29aef">const</tspan> declaration: <tspan fill="#d29aef">zast</tspan>.<tspan fill="#d29aef">StructDeclaration</tspan> = .{</text>
+<text class="source" x="60" y="756" xml:space="preserve">    .members = &amp;.{</text>
+<text class="source" x="60" y="781" xml:space="preserve">        .{ .field = .{</text>
+<text class="source" x="60" y="806" xml:space="preserve">            .name = <tspan fill="#f29baf">"value"</tspan>,</text>
+<text class="source" x="60" y="831" xml:space="preserve">            .type_expression = .{ .identifier = <tspan fill="#f29baf">"u32"</tspan> },</text>
+<text class="source" x="60" y="856" xml:space="preserve">            .value = .{ .integer_literal = <tspan fill="#f29baf">"42"</tspan> },</text>
+<text class="source" x="60" y="881" xml:space="preserve">        } },</text>
+<text class="source" x="60" y="906" xml:space="preserve">        .{ .function = .{</text>
+<text class="source" x="60" y="931" xml:space="preserve">            .name = <tspan fill="#f29baf">"get"</tspan>,</text>
+<text class="source" x="60" y="956" xml:space="preserve">            .declaration = &amp;getter,</text>
+<text class="source" x="60" y="981" xml:space="preserve">            .visibility = .public,</text>
+<text class="source" x="60" y="1006" xml:space="preserve">        } },</text>
+<text class="source" x="60" y="1031" xml:space="preserve">    },</text>
+<text class="source" x="60" y="1056" xml:space="preserve">};</text>
+<text class="source" x="60" y="1081" xml:space="preserve"><tspan fill="#d29aef">try</tspan> declaration.emit(</text>
+<text class="source" x="60" y="1106" xml:space="preserve">    allocator, context, <tspan fill="#f29baf">"Reading"</tspan>, .public,</text>
+<text class="source" x="60" y="1131" xml:space="preserve">);</text>
+<text class="output" x="770" y="181" xml:space="preserve"><tspan fill="#d29aef">pub</tspan> <tspan fill="#d29aef">const</tspan> <tspan fill="#d29aef">Reading</tspan> = <tspan fill="#d29aef">struct</tspan> {</text>
+<text class="output" x="770" y="206" xml:space="preserve">    value: <tspan fill="#d29aef">u32</tspan> = <tspan fill="#f4ba93">42</tspan>,</text>
+<text class="output" x="770" y="231" xml:space="preserve">    <tspan fill="#d29aef">pub</tspan> <tspan fill="#d29aef">fn</tspan> get(self: *<tspan fill="#d29aef">const</tspan> <tspan fill="#93d9d8">@This</tspan>()) <tspan fill="#d29aef">u32</tspan> {</text>
+<text class="output" x="770" y="256" xml:space="preserve">        <tspan fill="#d29aef">return</tspan> self.value;</text>
+<text class="output" x="770" y="281" xml:space="preserve">    }</text>
+<text class="output" x="770" y="306" xml:space="preserve">};</text>
+<path d="M697 279H726 M718 271L726 279L718 287" fill="none" stroke="#a1f0d0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="32" y="1211" fill="#bac4be" font-size="15">The struct emits the getter as a member. self makes it usable as a method.</text>
+</svg>

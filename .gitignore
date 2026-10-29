@@ -1,0 +1,6 @@
+# Zig build cache and generated outputs (including API documentation)
+.zig-cache/
+zig-out/
+
+# macOS metadata
+.DS_Store

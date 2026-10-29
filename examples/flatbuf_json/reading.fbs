@@ -1,0 +1,11 @@
+enum Status:ubyte {
+    Unknown = 0,
+    Ok = 1,
+    Warning = 2
+}
+
+table Reading {
+    answer:uint = 65;
+}
+
+root_type Reading;

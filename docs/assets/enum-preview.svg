@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="560" viewBox="0 0 1200 560" role="img" aria-labelledby="title description">
+<title id="title">An enum description becomes formatted Zig source</title>
+<desc id="description">A zast EnumDeclaration with unknown and ok fields emits pub const Status = enum { unknown, ok }. The renderer supplies formatting.</desc>
+<style>
+text { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+.source, .output { font-family: 'SFMono-Regular', Menlo, Consolas, monospace; font-size: 17px; fill: #f1f4ee; }
+</style>
+<rect width="1200" height="560" rx="20" fill="#0b1613"/>
+<text x="32" y="48" fill="#f1f4ee" font-size="24" font-weight="600">One description. Formatted source.</text>
+<text x="1168" y="47" text-anchor="end" fill="#bac4be" font-size="13" letter-spacing="2">ZAST / ENUM</text>
+<rect x="32" y="80" width="650" height="418" rx="12" fill="#0c1714" stroke="#35463e"/>
+<rect x="742" y="80" width="426" height="418" rx="12" fill="#0c1714" stroke="#35463e"/>
+<text x="60" y="119" fill="#a1f0d0" font-size="15" font-weight="600">01 / DESCRIBE</text>
+<text x="770" y="119" fill="#a1f0d0" font-size="15" font-weight="600">02 / RENDER</text>
+<path d="M32 143H682 M742 143H1168" stroke="#35463e"/>
+<text class="source" x="60" y="181" xml:space="preserve"><tspan fill="#d29aef">const</tspan> status: <tspan fill="#d29aef">zast</tspan>.<tspan fill="#d29aef">EnumDeclaration</tspan> = .{</text>
+<text class="source" x="60" y="206" xml:space="preserve">    .backing_type = <tspan fill="#d29aef">null</tspan>,</text>
+<text class="source" x="60" y="231" xml:space="preserve">    .non_exhaustive = <tspan fill="#d29aef">false</tspan>,</text>
+<text class="source" x="60" y="256" xml:space="preserve">    .fields = &amp;.{</text>
+<text class="source" x="60" y="281" xml:space="preserve">        .{ .name = <tspan fill="#f29baf">"unknown"</tspan> },</text>
+<text class="source" x="60" y="306" xml:space="preserve">        .{ .name = <tspan fill="#f29baf">"ok"</tspan> },</text>
+<text class="source" x="60" y="331" xml:space="preserve">    },</text>
+<text class="source" x="60" y="356" xml:space="preserve">};</text>
+<text class="source" x="60" y="381" xml:space="preserve"><tspan fill="#d29aef">try</tspan> status.emit(</text>
+<text class="source" x="60" y="406" xml:space="preserve">    allocator, context, <tspan fill="#f29baf">"Status"</tspan>, .public,</text>
+<text class="source" x="60" y="431" xml:space="preserve">);</text>
+<text class="output" x="770" y="181" xml:space="preserve"><tspan fill="#d29aef">pub</tspan> <tspan fill="#d29aef">const</tspan> <tspan fill="#d29aef">Status</tspan> = <tspan fill="#d29aef">enum</tspan> {</text>
+<text class="output" x="770" y="206" xml:space="preserve">    unknown,</text>
+<text class="output" x="770" y="231" xml:space="preserve">    ok,</text>
+<text class="output" x="770" y="256" xml:space="preserve">};</text>
+<path d="M697 279H726 M718 271L726 279L718 287" fill="none" stroke="#a1f0d0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="32" y="534" fill="#bac4be" font-size="15">Compose fields and expressions. Let std.zig.Ast render the file.</text>
+</svg>

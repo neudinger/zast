@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1320" height="512" viewBox="0 0 1320 512" role="img" aria-labelledby="title description">
+<title id="title">FlatBuffers JSON</title>
+<desc id="description">Read a small compiler-generated FlatBuffers schema JSON and emit an enum and a struct with zast. This excerpt omits extra metadata and preserves the enum names and values.</desc>
+<style>
+text { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+.source, .output { font-family: 'SFMono-Regular', Menlo, Consolas, monospace; font-size: 17px; fill: #f1f4ee; }
+</style>
+<rect width="1320" height="512" rx="20" fill="#0b1613"/>
+<text x="32" y="48" fill="#f1f4ee" font-size="24" font-weight="600">FlatBuffers JSON</text>
+<text x="1288" y="47" text-anchor="end" fill="#bac4be" font-size="13" letter-spacing="2">ZAST / FLATBUFFERS JSON</text>
+<rect x="32" y="80" width="680" height="370" rx="12" fill="#0c1714" stroke="#35463e"/>
+<text x="60" y="119" fill="#a1f0d0" font-size="15" font-weight="600">01 / JSON ENUM EXCERPT</text>
+<path d="M32 143H712" stroke="#35463e"/>
+<text class="source" x="60" y="181" xml:space="preserve">{</text>
+<text class="source" x="60" y="206" xml:space="preserve">  <tspan fill="#f29baf">"name"</tspan>: <tspan fill="#f29baf">"Status"</tspan>,</text>
+<text class="source" x="60" y="231" xml:space="preserve">  <tspan fill="#f29baf">"values"</tspan>: [</text>
+<text class="source" x="60" y="256" xml:space="preserve">    {<tspan fill="#f29baf">"name"</tspan>: <tspan fill="#f29baf">"Unknown"</tspan>, <tspan fill="#f29baf">"value"</tspan>: <tspan fill="#f4ba93">0</tspan>},</text>
+<text class="source" x="60" y="281" xml:space="preserve">    {<tspan fill="#f29baf">"name"</tspan>: <tspan fill="#f29baf">"Ok"</tspan>, <tspan fill="#f29baf">"value"</tspan>: <tspan fill="#f4ba93">1</tspan>},</text>
+<text class="source" x="60" y="306" xml:space="preserve">    {<tspan fill="#f29baf">"name"</tspan>: <tspan fill="#f29baf">"Warning"</tspan>, <tspan fill="#f29baf">"value"</tspan>: <tspan fill="#f4ba93">2</tspan>}</text>
+<text class="source" x="60" y="331" xml:space="preserve">  ],</text>
+<text class="source" x="60" y="356" xml:space="preserve">  <tspan fill="#f29baf">"underlying_type"</tspan>: {<tspan fill="#f29baf">"base_type"</tspan>: <tspan fill="#f29baf">"UByte"</tspan>}</text>
+<text class="source" x="60" y="381" xml:space="preserve">}</text>
+<rect x="772" y="80" width="516" height="370" rx="12" fill="#0c1714" stroke="#35463e"/>
+<text x="800" y="119" fill="#a1f0d0" font-size="15" font-weight="600">02 / RENDERED ZIG EXCERPT</text>
+<path d="M772 143H1288" stroke="#35463e"/>
+<text class="output" x="800" y="181" xml:space="preserve"><tspan fill="#d29aef">pub</tspan> <tspan fill="#d29aef">const</tspan> <tspan fill="#d29aef">Status</tspan> = <tspan fill="#d29aef">enum</tspan>(<tspan fill="#d29aef">u8</tspan>) {</text>
+<text class="output" x="800" y="206" xml:space="preserve">    Unknown = <tspan fill="#f4ba93">0</tspan>,</text>
+<text class="output" x="800" y="231" xml:space="preserve">    Ok = <tspan fill="#f4ba93">1</tspan>,</text>
+<text class="output" x="800" y="256" xml:space="preserve">    Warning = <tspan fill="#f4ba93">2</tspan>,</text>
+<text class="output" x="800" y="281" xml:space="preserve">    _,</text>
+<text class="output" x="800" y="306" xml:space="preserve">};</text>
+<path d="M727 279H756 M748 271L756 279L748 287" fill="none" stroke="#a1f0d0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="32" y="486" fill="#bac4be" font-size="15">Compiler-generated schema JSON. The example emits one enum and one struct.</text>
+</svg>

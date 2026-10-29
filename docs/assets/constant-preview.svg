@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="452" viewBox="0 0 1280 452" role="img" aria-labelledby="title description">
+<title id="title">Give a value a name.</title>
+<desc id="description">A typed constant description emits pub const answer: u32 = 42. Both panes are complete snippets; use the README runner for the description.</desc>
+<style>
+text { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+.source, .output { font-family: 'SFMono-Regular', Menlo, Consolas, monospace; font-size: 17px; fill: #f1f4ee; }
+</style>
+<rect width="1280" height="452" rx="20" fill="#0b1613"/>
+<text x="32" y="48" fill="#f1f4ee" font-size="24" font-weight="600">Give a value a name.</text>
+<text x="1248" y="47" text-anchor="end" fill="#bac4be" font-size="13" letter-spacing="2">ZAST / CONSTANT</text>
+<rect x="32" y="80" width="650" height="310" rx="12" fill="#0c1714" stroke="#35463e"/>
+<rect x="742" y="80" width="506" height="310" rx="12" fill="#0c1714" stroke="#35463e"/>
+<text x="60" y="119" fill="#a1f0d0" font-size="15" font-weight="600">01 / DESCRIBE</text>
+<text x="770" y="119" fill="#a1f0d0" font-size="15" font-weight="600">02 / RENDER</text>
+<path d="M32 143H682 M742 143H1248" stroke="#35463e"/>
+<text class="source" x="60" y="181" xml:space="preserve"><tspan fill="#d29aef">const</tspan> declaration: <tspan fill="#d29aef">zast</tspan>.<tspan fill="#d29aef">Declaration</tspan> = .{</text>
+<text class="source" x="60" y="206" xml:space="preserve">    .type_expression = .{ .identifier = <tspan fill="#f29baf">"u32"</tspan> },</text>
+<text class="source" x="60" y="231" xml:space="preserve">    .value = .{ .integer_literal = <tspan fill="#f29baf">"42"</tspan> },</text>
+<text class="source" x="60" y="256" xml:space="preserve">};</text>
+<text class="source" x="60" y="281" xml:space="preserve"><tspan fill="#d29aef">try</tspan> declaration.emit(</text>
+<text class="source" x="60" y="306" xml:space="preserve">    allocator, context, <tspan fill="#f29baf">"answer"</tspan>, .public,</text>
+<text class="source" x="60" y="331" xml:space="preserve">);</text>
+<text class="output" x="770" y="181" xml:space="preserve"><tspan fill="#d29aef">pub</tspan> <tspan fill="#d29aef">const</tspan> answer: <tspan fill="#d29aef">u32</tspan> = <tspan fill="#f4ba93">42</tspan>;</text>
+<path d="M697 279H726 M718 271L726 279L718 287" fill="none" stroke="#a1f0d0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="32" y="426" fill="#bac4be" font-size="15">A declaration supplies the name, visibility, type, and value.</text>
+</svg>

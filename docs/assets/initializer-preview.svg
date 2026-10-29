@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="712" viewBox="0 0 1280 712" role="img" aria-labelledby="title description">
+<title id="title">Compose fields into a value.</title>
+<desc id="description">A struct initializer emits options with required true and status unknown. Both panes are complete snippets; use the README runner for the description.</desc>
+<style>
+text { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+.source, .output { font-family: 'SFMono-Regular', Menlo, Consolas, monospace; font-size: 17px; fill: #f1f4ee; }
+</style>
+<rect width="1280" height="712" rx="20" fill="#0b1613"/>
+<text x="32" y="48" fill="#f1f4ee" font-size="24" font-weight="600">Compose fields into a value.</text>
+<text x="1248" y="47" text-anchor="end" fill="#bac4be" font-size="13" letter-spacing="2">ZAST / VALUE INITIALIZER</text>
+<rect x="32" y="80" width="650" height="570" rx="12" fill="#0c1714" stroke="#35463e"/>
+<rect x="742" y="80" width="506" height="570" rx="12" fill="#0c1714" stroke="#35463e"/>
+<text x="60" y="119" fill="#a1f0d0" font-size="15" font-weight="600">01 / DESCRIBE</text>
+<text x="770" y="119" fill="#a1f0d0" font-size="15" font-weight="600">02 / RENDER</text>
+<path d="M32 143H682 M742 143H1248" stroke="#35463e"/>
+<text class="source" x="60" y="181" xml:space="preserve"><tspan fill="#d29aef">const</tspan> declaration: <tspan fill="#d29aef">zast</tspan>.<tspan fill="#d29aef">Declaration</tspan> = .{</text>
+<text class="source" x="60" y="206" xml:space="preserve">    .value = .{ .struct_init = .{</text>
+<text class="source" x="60" y="231" xml:space="preserve">        .fields = &amp;.{</text>
+<text class="source" x="60" y="256" xml:space="preserve">            .{</text>
+<text class="source" x="60" y="281" xml:space="preserve">                .name = <tspan fill="#f29baf">"required"</tspan>,</text>
+<text class="source" x="60" y="306" xml:space="preserve">                .value = .{ .identifier = <tspan fill="#f29baf">"true"</tspan> },</text>
+<text class="source" x="60" y="331" xml:space="preserve">            },</text>
+<text class="source" x="60" y="356" xml:space="preserve">            .{</text>
+<text class="source" x="60" y="381" xml:space="preserve">                .name = <tspan fill="#f29baf">"status"</tspan>,</text>
+<text class="source" x="60" y="406" xml:space="preserve">                .value = .{ .enum_literal = <tspan fill="#f29baf">"unknown"</tspan> },</text>
+<text class="source" x="60" y="431" xml:space="preserve">            },</text>
+<text class="source" x="60" y="456" xml:space="preserve">        },</text>
+<text class="source" x="60" y="481" xml:space="preserve">        .trailing_comma = <tspan fill="#d29aef">true</tspan>,</text>
+<text class="source" x="60" y="506" xml:space="preserve">    } },</text>
+<text class="source" x="60" y="531" xml:space="preserve">};</text>
+<text class="source" x="60" y="556" xml:space="preserve"><tspan fill="#d29aef">try</tspan> declaration.emit(</text>
+<text class="source" x="60" y="581" xml:space="preserve">    allocator, context, <tspan fill="#f29baf">"options"</tspan>, .public,</text>
+<text class="source" x="60" y="606" xml:space="preserve">);</text>
+<text class="output" x="770" y="181" xml:space="preserve"><tspan fill="#d29aef">pub</tspan> <tspan fill="#d29aef">const</tspan> options = .{</text>
+<text class="output" x="770" y="206" xml:space="preserve">    .required = <tspan fill="#d29aef">true</tspan>,</text>
+<text class="output" x="770" y="231" xml:space="preserve">    .status = .unknown,</text>
+<text class="output" x="770" y="256" xml:space="preserve">};</text>
+<path d="M697 279H726 M718 271L726 279L718 287" fill="none" stroke="#a1f0d0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="32" y="686" fill="#bac4be" font-size="15">struct_init describes a value; enum_literal emits a leading dot.</text>
+</svg>
