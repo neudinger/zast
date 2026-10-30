@@ -4,16 +4,14 @@
   <img src="docs/assets/banner.png" alt="zast — Zig Abstract Syntax Tree. Write in Zig to emit Zig. A syntax tree becomes source code." width="100%">
 </p>
 
-**Write in Zig to emit Zig**
-
-Build Zig source with composable descriptions backed by `std.zig.Ast`.
-
 <p align="center">
   <a href="build.zig"><img src="https://img.shields.io/badge/Zig-0.17.0-f3a642?style=flat-square&amp;logo=zig&amp;logoColor=white" alt="Zig 0.17.0"></a>
   <a href="src/root.zig"><img src="https://img.shields.io/badge/API-documented-74988b?style=flat-square" alt="Documented API"></a>
   <a href="#runnable-examples-and-schema-input"><img src="https://img.shields.io/badge/examples-runnable-657d9d?style=flat-square" alt="Runnable examples"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-EUPL--1.2-8978a9?style=flat-square" alt="License: EUPL-1.2"></a>
 </p>
+
+Build Zig source with composable descriptions backed by `std.zig.Ast`.
 
 <p align="center">
   <a href="docs/examples.md#complete-runner">Quick start</a> ·
@@ -24,12 +22,21 @@ Build Zig source with composable descriptions backed by `std.zig.Ast`.
   <a href="#license">License</a>
 </p>
 
-```text
-zast descriptions → emit tokens and nodes → render → formatted Zig source
-```
+<p align="center">
+  <a href="https://neudinger.github.io/zast-site/">
+    <img src="https://img.shields.io/badge/website-zast-a1f0d0?style=flat-square&amp;labelColor=111e1a" alt="Website">
+  </a>
+  <a href="https://neudinger.github.io/zast-site/docs/">
+    <img src="https://img.shields.io/badge/docs-read-a1f0d0?style=flat-square&amp;labelColor=111e1a" alt="Documentation">
+  </a>
+  <a href="https://neudinger.github.io/zast-site/docs/api/">
+    <img src="https://img.shields.io/badge/API-reference-d29aef?style=flat-square&amp;labelColor=111e1a" alt="API reference">
+  </a>
+  <a href="https://neudinger.github.io/zast-site/examples/">
+    <img src="https://img.shields.io/badge/playground-try_online-f4ba93?style=flat-square&amp;labelColor=111e1a" alt="Open playground">
+  </a>
+</p>
 
-The illustrations pair **zast descriptions or schema JSON** with **generated
-Zig source**. They use the project's Zig 0.17.0 API.
 
 ## Reading the examples
 
@@ -40,6 +47,13 @@ their linked generators and inputs.
 
 Descriptions provide values and types; `emit` adds a named declaration to the
 file. The runner calls `finish` and `renderAlloc` once after generation.
+
+```mermaid
+flowchart LR
+    descriptions["zast descriptions"] --> emit["emit tokens and nodes"]
+    emit --> render["render"]
+    render --> source["formatted Zig source"]
+```
 
 ## 1. A constant
 
