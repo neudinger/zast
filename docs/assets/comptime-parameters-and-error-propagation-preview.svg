@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1320" height="1577" viewBox="0 0 1320 1577" role="img" aria-labelledby="title description">
+<title id="title">Comptime parameters and error propagation</title>
+<desc id="description">A `comptime` type parameter determines the error-union parameter and return types. The body combines a local `var`, assignment, and `try`; errors return before the uninitialized local is read. The runnable example emits this standalone function.</desc>
+<style>
+text { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+.source, .output { font-family: 'SFMono-Regular', Menlo, Consolas, monospace; font-size: 17px; fill: #f1f4ee; }
+</style>
+<rect width="1320" height="1577" rx="20" fill="#0b1613"/>
+<text x="32" y="48" fill="#f1f4ee" font-size="24" font-weight="600">Comptime parameters and error propagation</text>
+<text x="1288" y="47" text-anchor="end" fill="#bac4be" font-size="13" letter-spacing="2">ZAST / RICH FUNCTIONS</text>
+<rect x="32" y="80" width="1256" height="1120" rx="12" fill="#0c1714" stroke="#35463e"/>
+<text x="60" y="119" fill="#a1f0d0" font-size="15" font-weight="600">01 / DESCRIBE</text>
+<path d="M32 143H1288" stroke="#35463e"/>
+<text class="source" x="60" y="181" xml:space="preserve"><tspan fill="#d29aef">const</tspan> value_type: <tspan fill="#d29aef">zast</tspan>.<tspan fill="#d29aef">Expression</tspan> = .{</text>
+<text class="source" x="60" y="206" xml:space="preserve">    .identifier = <tspan fill="#f29baf">"Value"</tspan>,</text>
+<text class="source" x="60" y="231" xml:space="preserve">};</text>
+<text class="source" x="60" y="256" xml:space="preserve"><tspan fill="#d29aef">const</tspan> errors: <tspan fill="#d29aef">zast</tspan>.<tspan fill="#d29aef">Expression</tspan> = .{</text>
+<text class="source" x="60" y="281" xml:space="preserve">    .identifier = <tspan fill="#f29baf">"anyerror"</tspan>,</text>
+<text class="source" x="60" y="306" xml:space="preserve">};</text>
+<text class="source" x="60" y="331" xml:space="preserve"><tspan fill="#d29aef">const</tspan> result_type: <tspan fill="#d29aef">zast</tspan>.<tspan fill="#d29aef">Expression</tspan> = .{</text>
+<text class="source" x="60" y="356" xml:space="preserve">    .error_union_type = .{</text>
+<text class="source" x="60" y="381" xml:space="preserve">        .error_set = &amp;errors,</text>
+<text class="source" x="60" y="406" xml:space="preserve">        .payload_type = &amp;value_type,</text>
+<text class="source" x="60" y="431" xml:space="preserve">    },</text>
+<text class="source" x="60" y="456" xml:space="preserve">};</text>
+<text class="source" x="60" y="481" xml:space="preserve"><tspan fill="#d29aef">const</tspan> value: <tspan fill="#d29aef">zast</tspan>.<tspan fill="#d29aef">Expression</tspan> = .{ .identifier = <tspan fill="#f29baf">"value"</tspan> };</text>
+<text class="source" x="60" y="506" xml:space="preserve"><tspan fill="#d29aef">const</tspan> function: <tspan fill="#d29aef">zast</tspan>.<tspan fill="#d29aef">FunctionDeclaration</tspan> = .{</text>
+<text class="source" x="60" y="531" xml:space="preserve">    .parameters = &amp;.{</text>
+<text class="source" x="60" y="556" xml:space="preserve">        .{</text>
+<text class="source" x="60" y="581" xml:space="preserve">            .name = <tspan fill="#f29baf">"Value"</tspan>,</text>
+<text class="source" x="60" y="606" xml:space="preserve">            .is_comptime = <tspan fill="#d29aef">true</tspan>,</text>
+<text class="source" x="60" y="631" xml:space="preserve">            .type_expression = .{ .identifier = <tspan fill="#f29baf">"type"</tspan> },</text>
+<text class="source" x="60" y="656" xml:space="preserve">        },</text>
+<text class="source" x="60" y="681" xml:space="preserve">        .{ .name = <tspan fill="#f29baf">"value"</tspan>, .type_expression = result_type },</text>
+<text class="source" x="60" y="706" xml:space="preserve">    },</text>
+<text class="source" x="60" y="731" xml:space="preserve">    .return_type = result_type,</text>
+<text class="source" x="60" y="756" xml:space="preserve">    .body = .{ .statements = &amp;.{</text>
+<text class="source" x="60" y="781" xml:space="preserve">        .{ .declaration = .{</text>
+<text class="source" x="60" y="806" xml:space="preserve">            .name = <tspan fill="#f29baf">"result"</tspan>,</text>
+<text class="source" x="60" y="831" xml:space="preserve">            .declaration = .{</text>
+<text class="source" x="60" y="856" xml:space="preserve">                .kind = .variable,</text>
+<text class="source" x="60" y="881" xml:space="preserve">                .type_expression = value_type,</text>
+<text class="source" x="60" y="906" xml:space="preserve">                .value = .{ .identifier = <tspan fill="#f29baf">"undefined"</tspan> },</text>
+<text class="source" x="60" y="931" xml:space="preserve">            },</text>
+<text class="source" x="60" y="956" xml:space="preserve">        } },</text>
+<text class="source" x="60" y="981" xml:space="preserve">        .{ .assignment = .{</text>
+<text class="source" x="60" y="1006" xml:space="preserve">            .target = .{ .identifier = <tspan fill="#f29baf">"result"</tspan> },</text>
+<text class="source" x="60" y="1031" xml:space="preserve">            .value = .{ .@<tspan fill="#f29baf">"try"</tspan> = &amp;value },</text>
+<text class="source" x="60" y="1056" xml:space="preserve">        } },</text>
+<text class="source" x="60" y="1081" xml:space="preserve">        .{ .return_value = .{ .identifier = <tspan fill="#f29baf">"result"</tspan> } },</text>
+<text class="source" x="60" y="1106" xml:space="preserve">    } },</text>
+<text class="source" x="60" y="1131" xml:space="preserve">};</text>
+<text class="source" x="60" y="1156" xml:space="preserve"><tspan fill="#d29aef">try</tspan> function.emit(allocator, context, <tspan fill="#f29baf">"forward"</tspan>, .public);</text>
+<rect x="32" y="1270" width="1256" height="245" rx="12" fill="#0c1714" stroke="#35463e"/>
+<text x="60" y="1309" fill="#a1f0d0" font-size="15" font-weight="600">02 / RENDER</text>
+<path d="M32 1333H1288" stroke="#35463e"/>
+<text class="output" x="60" y="1371" xml:space="preserve"><tspan fill="#d29aef">pub</tspan> <tspan fill="#d29aef">fn</tspan> forward(<tspan fill="#d29aef">comptime</tspan> <tspan fill="#d29aef">Value</tspan>: <tspan fill="#d29aef">type</tspan>, value: <tspan fill="#d29aef">anyerror</tspan>!<tspan fill="#d29aef">Value</tspan>) <tspan fill="#d29aef">anyerror</tspan>!<tspan fill="#d29aef">Value</tspan> {</text>
+<text class="output" x="60" y="1396" xml:space="preserve">    <tspan fill="#d29aef">var</tspan> result: <tspan fill="#d29aef">Value</tspan> = <tspan fill="#d29aef">undefined</tspan>;</text>
+<text class="output" x="60" y="1421" xml:space="preserve">    result = <tspan fill="#d29aef">try</tspan> value;</text>
+<text class="output" x="60" y="1446" xml:space="preserve">    <tspan fill="#d29aef">return</tspan> result;</text>
+<text class="output" x="60" y="1471" xml:space="preserve">}</text>
+<path d="M660 1222V1250 M652 1242L660 1250L668 1242" fill="none" stroke="#a1f0d0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="32" y="1551" fill="#bac4be" font-size="15">Comptime types, local variables, assignment, and try compose.</text>
+</svg>

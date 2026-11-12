@@ -40,6 +40,14 @@ pub fn build(builder: *Build) void {
         .root_module = flatbuf_json,
     });
     builder.installArtifact(flatbuf);
+
+    const documentation = builder.addLibrary(.{ .name = "zast", .root_module = zast });
+    const docs = builder.addInstallDirectory(.{
+        .source_dir = documentation.getEmittedDocs(),
+        .install_dir = .prefix,
+        .install_subdir = "docs",
+    });
+
     // Only the generator executes on the host; tests compile its actual stdout for the target.
     const reading_source = reading_source_blk: {
         var host_options = options;
@@ -67,6 +75,7 @@ pub fn build(builder: *Build) void {
     const tests = builder.addTest(.{
         .root_module = module(builder, builder.path("tests/test_all.zig"), test_options),
     });
+
     inline for (.{
         .{ "declarations", "examples/declarations.zig" },
         .{ "comments", "examples/comments.zig" },
@@ -99,6 +108,7 @@ pub fn build(builder: *Build) void {
     }
     const flatbuf_run = &builder.addRunArtifact(flatbuf).step;
     inline for (.{
+        .{ .docs, "Generate API documentation", &docs.step },
         .{ .@"run-flatbuf-json", "Run the small FlatBuffers schema JSON example", flatbuf_run },
         .{ .check, "Compile the test suite without running it", &tests.step },
         .{ .@"test", "Test the generator", &builder.addRunArtifact(tests).step },
