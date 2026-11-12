@@ -170,7 +170,8 @@
 //! ```
 //!
 //! On failure, `try` returns the operand's error from the generated function.
-//! Emission failures still propagate from `emit`.
+//! Emission failures still propagate from `emit`. See `examples/rich_functions.zig`
+//! for a standalone generic function combining a local variable, assignment, and `try`.
 
 const std = @import("std");
 const AstContext = @import("AstContext.zig");

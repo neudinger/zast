@@ -35,6 +35,18 @@ pub fn build(builder: *Build) void {
     const tests = builder.addTest(.{ .root_module = test_module });
     inline for (.{
         .{ "declarations", "examples/declarations.zig" },
+        .{ "comments", "examples/comments.zig" },
+        .{ "struct", "examples/struct.zig" },
+        .{ "enum", "examples/enum.zig" },
+        .{ "union", "examples/union.zig" },
+        .{ "function", "examples/function.zig" },
+        .{ "function-types", "examples/function_types.zig" },
+        .{ "blocks", "examples/blocks.zig" },
+        .{ "rich-functions", "examples/rich_functions.zig" },
+        .{ "calls", "examples/calls.zig" },
+        .{ "initializers", "examples/initializers.zig" },
+        .{ "type-composition", "examples/type_composition.zig" },
+        .{ "compound-types", "examples/compound_types.zig" },
     }) |example| {
         const example_module = module(builder, builder.path(example[1]), example_options);
         const executable = builder.addExecutable(.{
