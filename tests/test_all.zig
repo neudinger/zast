@@ -7,5 +7,7 @@ test {
     _ = @import("test_expression.zig");
     _ = @import("test_function_declaration.zig");
     _ = @import("test_initializer_expression.zig");
+    _ = @import("test_struct_declaration.zig");
+    _ = @import("test_type_composition.zig");
     _ = @import("test_union_declaration.zig");
 }

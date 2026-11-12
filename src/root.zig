@@ -18,3 +18,5 @@ pub const EnumDeclaration = @import("EnumDeclaration.zig");
 pub const UnionDeclaration = @import("UnionDeclaration.zig");
 /// Function descriptions with prototype, container member, and root emission.
 pub const FunctionDeclaration = @import("FunctionDeclaration.zig");
+/// Struct descriptions composing fields, functions, and named bindings.
+pub const StructDeclaration = @import("StructDeclaration.zig");

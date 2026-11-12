@@ -1,9 +1,9 @@
-//! Function declarations, anonymous prototypes and composed bodies.
+//! Function declarations, anonymous prototypes, methods, and composed bodies.
 //!
 //! ## Coverage
 //!
 //! - Borrowed parameters, pointer constness, and zero through three parameters.
-//! - Anonymous prototypes, comptime parameters, and composed types.
+//! - Anonymous prototypes, methods, comptime parameters, and composed types.
 //! - Local declarations, nested blocks, assignments, returns, and `try` precedence.
 //! - AST links, statement ranges, token spellings, and raw-source reparsing.
 //! - Parameter validation, child emission errors, and allocation-failure cleanup.
@@ -377,6 +377,43 @@ test "emitType embeds anonymous prototypes with named or unnamed parameters" {
         .return_type = .{ .identifier = "u32" },
     };
     try expectRendered(FunctionType{ .declaration = &named }, "Callback", "pub const Callback = fn (value: u32) u32;");
+}
+
+test "emitNode embeds a method whose prototype and body both use extra data" {
+    const reading_type: zast.Expression = .{ .identifier = "Reading" };
+    const receiver: zast.Expression = .{ .identifier = "self" };
+    const field_value: zast.Expression = .{ .field_access = .{ .base = &receiver, .name = "answer" } };
+    const amount: zast.Expression = .{ .identifier = "amount" };
+    const declaration: zast.FunctionDeclaration = .{
+        .parameters = &.{
+            .{ .name = "self", .type_expression = .{ .pointer_type = .{ .child_type = &reading_type, .is_const = true } } },
+            .{ .name = "amount", .type_expression = .{ .identifier = "u5" } },
+        },
+        .return_type = .{ .identifier = "u32" },
+        .body = .{ .statements = &.{
+            .{ .declaration = .{ .name = "shifted", .declaration = .{ .value = .{ .shift_left = .{ .left = &field_value, .right = &amount } } } } },
+            .{ .declaration = .{ .name = "result", .declaration = .{ .value = .{ .identifier = "shifted" } } } },
+            .{ .return_value = .{ .identifier = "result" } },
+        } },
+    };
+    const structure: zast.StructDeclaration = .{ .members = &.{
+        .{ .field = .{
+            .name = "answer",
+            .type_expression = .{ .identifier = "u32" },
+            .value = .{ .integer_literal = "65" },
+        } },
+        .{ .function = .{ .name = "read", .declaration = &declaration, .visibility = .public } },
+    } };
+    try expectRendered(&structure, "Reading",
+        \\pub const Reading = struct {
+        \\    answer: u32 = 65,
+        \\    pub fn read(self: *const Reading, amount: u5) u32 {
+        \\        const shifted = self.answer << amount;
+        \\        const result = shifted;
+        \\        return result;
+        \\    }
+        \\};
+    );
 }
 
 test "missing definition parameter names are rejected before any AST writes" {
