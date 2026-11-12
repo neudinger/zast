@@ -32,11 +32,41 @@ pub fn build(builder: *Build) void {
     const reflection = module(builder, reflection_source, options);
     var example_options = options;
     example_options.imports = &.{.{ .name = "zast", .module = zast }};
+    const flatbuf_source = builder.path("examples/flatbuf_json/main.zig");
+    const flatbuf_json = module(builder, flatbuf_source, example_options);
+    flatbuf_json.addImport("reflection", reflection);
+    const flatbuf = builder.addExecutable(.{
+        .name = "zast-flatbuf-json",
+        .root_module = flatbuf_json,
+    });
+    builder.installArtifact(flatbuf);
+    // Only the generator executes on the host; tests compile its actual stdout for the target.
+    const reading_source = reading_source_blk: {
+        var host_options = options;
+        host_options.target = builder.graph.host;
+        const host_zast = module(builder, options.root_source_file.?, host_options);
+        const host_reflection = module(builder, reflection_source, host_options);
+        host_options.imports = &.{
+            .{ .name = "zast", .module = host_zast },
+            .{ .name = "reflection", .module = host_reflection },
+        };
+        const generator = builder.addExecutable(.{
+            .name = "zast-flatbuf-json",
+            .root_module = module(builder, flatbuf_source, host_options),
+        });
+        const generate = builder.addRunArtifact(generator);
+        break :reading_source_blk generate.captureStdOut(.{ .basename = "reading.zig" });
+    };
     var test_options = options;
-    test_options.imports = &.{.{ .name = "zast", .module = zast }};
-    const test_module = module(builder, builder.path("tests/test_all.zig"), test_options);
-    test_module.addImport("reflection", reflection);
-    const tests = builder.addTest(.{ .root_module = test_module });
+    test_options.imports = &.{
+        .{ .name = "zast", .module = zast },
+        .{ .name = "reflection", .module = reflection },
+        .{ .name = "flatbuf_json", .module = flatbuf_json },
+        .{ .name = "generated_reading", .module = module(builder, reading_source, options) },
+    };
+    const tests = builder.addTest(.{
+        .root_module = module(builder, builder.path("tests/test_all.zig"), test_options),
+    });
     inline for (.{
         .{ "declarations", "examples/declarations.zig" },
         .{ "comments", "examples/comments.zig" },
@@ -67,7 +97,9 @@ pub fn build(builder: *Build) void {
         command.dependOn(&run.step);
         if (is_schema) builder.step("run", "Run the JSON schema playground").dependOn(&run.step);
     }
+    const flatbuf_run = &builder.addRunArtifact(flatbuf).step;
     inline for (.{
+        .{ .@"run-flatbuf-json", "Run the small FlatBuffers schema JSON example", flatbuf_run },
         .{ .check, "Compile the test suite without running it", &tests.step },
         .{ .@"test", "Test the generator", &builder.addRunArtifact(tests).step },
     }) |command| builder.step(@tagName(command[0]), command[1]).dependOn(command[2]);
