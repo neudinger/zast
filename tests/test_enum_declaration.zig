@@ -1,9 +1,10 @@
-//! Enum declarations.
+//! Enum declarations and construction from `examples/json_schema/main.zig`.
 //!
 //! ## Coverage
 //!
 //! - Borrowed list and array fields, pointer constness, and deferred assignment.
 //! - Empty and inferred enums, explicit backing types, and computed values.
+//! - Schema-derived catch-all fields at the 255/256-value boundary.
 //! - Missing backing types rejected before any AST storage is changed.
 //! - Rendered output matched with parsed expectations and reparsed token source.
 //!
@@ -18,6 +19,7 @@
 
 const std = @import("std");
 const zast = @import("zast");
+const reflection = @import("reflection");
 const helpers = @import("helpers.zig");
 
 /// Compare formatted output with parsed expectations, then reparse emitted tokens.
@@ -125,6 +127,96 @@ test "null initial fields allow assigning inferred fields before emission" {
     };
 
     try expectRenderedEnum(enum_decl, "enumName", "pub const enumName = enum { unknown, ok, };");
+}
+
+test "JSON schema values generate an explicitly backed non-exhaustive enum" {
+    const allocator = std.testing.allocator;
+    var arena = std.heap.ArenaAllocator.init(allocator);
+    defer arena.deinit();
+    const builder_allocator = arena.allocator();
+    const json =
+        \\{
+        \\  "objects": [],
+        \\  "enums": [{
+        \\    "name": "Status",
+        \\    "values": [
+        \\      {"name": "Unknown", "value": 0},
+        \\      {"name": "Ok", "value": 1},
+        \\      {"name": "Warning", "value": 2}
+        \\    ],
+        \\    "underlying_type": {"base_type": "UByte"}
+        \\  }]
+        \\}
+    ;
+    const parsed = try std.json.parseFromSlice(reflection.Schema, allocator, json, .{});
+    defer parsed.deinit();
+    try std.testing.expectEqual(@as(usize, 1), parsed.value.enums.len);
+
+    for (parsed.value.enums) |schema_enum| {
+        const enum_decl = try zast.EnumDeclaration.init(builder_allocator, "u8", schema_enum.values.len < 256, null);
+        var enum_fields: std.ArrayList(zast.Field) = .empty;
+        defer enum_fields.deinit(allocator);
+        for (schema_enum.values) |enum_value| {
+            const value_spelling = try std.fmt.allocPrint(builder_allocator, "{d}", .{enum_value.value});
+            try enum_fields.append(allocator, .{
+                .name = enum_value.name,
+                .value = .{ .integer_literal = value_spelling },
+            });
+        }
+        enum_decl.fields = enum_fields.items;
+
+        try expectRenderedEnum(enum_decl, schema_enum.name,
+            \\pub const Status = enum(u8) {
+            \\    Unknown = 0,
+            \\    Ok = 1,
+            \\    Warning = 2,
+            \\    _,
+            \\};
+        );
+    }
+}
+
+test "schema generation includes a catch-all for 255 values and omits it for 256" {
+    const allocator = std.testing.allocator;
+    var arena = std.heap.ArenaAllocator.init(allocator);
+    defer arena.deinit();
+    const builder_allocator = arena.allocator();
+    var schema_values: [256]reflection.EnumVal = undefined;
+    for (&schema_values, 0..) |*enum_value, value_index| {
+        enum_value.* = .{
+            .name = try std.fmt.allocPrint(builder_allocator, "value_{d}", .{value_index}),
+            .value = @intCast(value_index),
+        };
+    }
+
+    for ([_]usize{ 255, 256 }) |value_count| {
+        const schema_enum: reflection.Enum = .{
+            .name = "BoundaryStatus",
+            .values = schema_values[0..value_count],
+            .underlying_type = &.{ .base_type = .UByte },
+        };
+        const enum_decl = try zast.EnumDeclaration.init(builder_allocator, "u8", schema_enum.values.len < 256, null);
+        var enum_fields: std.ArrayList(zast.Field) = .empty;
+        defer enum_fields.deinit(allocator);
+        var expected_source: std.ArrayList(u8) = .empty;
+        defer expected_source.deinit(allocator);
+        try expected_source.appendSlice(allocator, "pub const BoundaryStatus = enum(u8) {");
+
+        for (schema_enum.values) |enum_value| {
+            const value_spelling = try std.fmt.allocPrint(builder_allocator, "{d}", .{enum_value.value});
+            try enum_fields.append(allocator, .{
+                .name = enum_value.name,
+                .value = .{ .integer_literal = value_spelling },
+            });
+            const expected_field = try std.fmt.allocPrint(builder_allocator, "{s} = {d},", .{ enum_value.name, enum_value.value });
+            try expected_source.appendSlice(allocator, expected_field);
+        }
+        enum_decl.fields = enum_fields.items;
+        if (value_count == 255) try expected_source.appendSlice(allocator, "_,");
+        try expected_source.appendSlice(allocator, "};");
+
+        try expectRenderedEnum(enum_decl, schema_enum.name, expected_source.items);
+    }
 }
 
 test "enum validation rejects invalid inferred types before emitting any syntax" {

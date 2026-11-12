@@ -27,11 +27,15 @@ pub fn build(builder: *Build) void {
         .optimize = builder.standardOptimizeOption(.{}),
     };
     const zast = builder.addModule("zast", options);
+    // Reflection belongs to the JSON examples, not the public library.
+    const reflection_source = builder.path("examples/json_schema/reflection.zig");
+    const reflection = module(builder, reflection_source, options);
     var example_options = options;
     example_options.imports = &.{.{ .name = "zast", .module = zast }};
     var test_options = options;
     test_options.imports = &.{.{ .name = "zast", .module = zast }};
     const test_module = module(builder, builder.path("tests/test_all.zig"), test_options);
+    test_module.addImport("reflection", reflection);
     const tests = builder.addTest(.{ .root_module = test_module });
     inline for (.{
         .{ "declarations", "examples/declarations.zig" },
@@ -47,16 +51,21 @@ pub fn build(builder: *Build) void {
         .{ "initializers", "examples/initializers.zig" },
         .{ "type-composition", "examples/type_composition.zig" },
         .{ "compound-types", "examples/compound_types.zig" },
+        .{ "json-schema", "examples/json_schema/main.zig" },
     }) |example| {
         const example_module = module(builder, builder.path(example[1]), example_options);
+        const is_schema = comptime std.mem.eql(u8, example[0], "json-schema");
+        if (is_schema) example_module.addImport("reflection", reflection);
+        // Preserve the JSON playground's existing executable path.
         const executable = builder.addExecutable(.{
-            .name = "zast-" ++ example[0],
+            .name = if (is_schema) "zast" else "zast-" ++ example[0],
             .root_module = example_module,
         });
         builder.installArtifact(executable);
         const run = builder.addRunArtifact(executable);
         const command = builder.step("run-" ++ example[0], "Run the " ++ example[0] ++ " example");
         command.dependOn(&run.step);
+        if (is_schema) builder.step("run", "Run the JSON schema playground").dependOn(&run.step);
     }
     inline for (.{
         .{ .check, "Compile the test suite without running it", &tests.step },
