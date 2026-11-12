@@ -1,4 +1,4 @@
-//! Type expressions and address-of expressions used by declarations.
+//! Type expressions and address-of expressions used by fields and declarations.
 //!
 //! ## Coverage
 //!
@@ -21,6 +21,16 @@ const std = @import("std");
 const zast = @import("zast");
 const helpers = @import("helpers.zig");
 
+fn expectRenderedFields(fields: []const zast.Field, expected_source: [:0]const u8) !void {
+    const allocator = std.testing.allocator;
+    var arena = std.heap.ArenaAllocator.init(allocator);
+    defer arena.deinit();
+    const union_decl = try zast.UnionDeclaration.init(arena.allocator(), .inferred, fields);
+    const rendered = try helpers.renderDescription(allocator, union_decl);
+    defer allocator.free(rendered);
+    try helpers.expectFormattedSource(allocator, expected_source, rendered);
+}
+
 test "optional type links its question-mark token to the child type node" {
     const allocator = std.testing.allocator;
     var context: zast.AstContext = .{};
@@ -37,6 +47,30 @@ test "optional type links its question-mark token to the child type node" {
     try std.testing.expectEqual(.question_mark, context.tokens.items(.tag)[question_token]);
     const child_node = context.nodes.items(.data)[optional_index].node;
     try std.testing.expectEqual(.identifier, context.nodes.items(.tag)[@backingInt(child_node)]);
+}
+
+test "optional types compose with identifiers, qualified types, grouping, and other optionals" {
+    const integer_type: zast.Expression = .{ .identifier = "u32" };
+    const optional_integer: zast.Expression = .{ .optional_type = &integer_type };
+    const namespace_expression: zast.Expression = .{ .identifier = "schema" };
+    const qualified_type: zast.Expression = .{
+        .field_access = .{ .base = &namespace_expression, .name = "Reading" },
+    };
+    const grouped_type: zast.Expression = .{ .grouped = &integer_type };
+    const fields = [_]zast.Field{
+        .{ .name = "number", .type_expression = optional_integer },
+        .{ .name = "reading", .type_expression = .{ .optional_type = &qualified_type } },
+        .{ .name = "nested", .type_expression = .{ .optional_type = &optional_integer } },
+        .{ .name = "grouped", .type_expression = .{ .optional_type = &grouped_type } },
+    };
+    try expectRenderedFields(&fields,
+        \\pub const Generated = union(enum) {
+        \\    number: ?u32,
+        \\    reading: ?schema.Reading,
+        \\    nested: ??u32,
+        \\    grouped: ?(u32),
+        \\};
+    );
 }
 
 fn optionalAllocationScenario(allocator: std.mem.Allocator) !void {
@@ -73,6 +107,46 @@ test "single-item pointer types link their asterisk token to the child type node
         try std.testing.expectEqual(.none, alignment_node);
         try std.testing.expectEqual(.identifier, context.nodes.items(.tag)[@backingInt(child_node)]);
     }
+}
+
+test "single-item pointer types compose with const qualifiers, optionals, and other types" {
+    const integer_type: zast.Expression = .{ .identifier = "u32" };
+    const mutable_pointer: zast.Expression = .{ .pointer_type = .{ .child_type = &integer_type } };
+    const const_pointer: zast.Expression = .{
+        .pointer_type = .{ .child_type = &integer_type, .is_const = true },
+    };
+    const optional_integer: zast.Expression = .{ .optional_type = &integer_type };
+    const namespace_expression: zast.Expression = .{ .identifier = "schema" };
+    const qualified_type: zast.Expression = .{
+        .field_access = .{ .base = &namespace_expression, .name = "Reading" },
+    };
+    const grouped_type: zast.Expression = .{ .grouped = &integer_type };
+    const fields = [_]zast.Field{
+        .{ .name = "mutable", .type_expression = mutable_pointer },
+        .{ .name = "immutable", .type_expression = const_pointer },
+        .{ .name = "optional_pointer", .type_expression = .{ .optional_type = &mutable_pointer } },
+        .{ .name = "optional_const_pointer", .type_expression = .{ .optional_type = &const_pointer } },
+        .{ .name = "pointer_to_optional", .type_expression = .{ .pointer_type = .{ .child_type = &optional_integer } } },
+        .{ .name = "nested", .type_expression = .{ .pointer_type = .{ .child_type = &mutable_pointer } } },
+        .{ .name = "nested_const", .type_expression = .{ .pointer_type = .{ .child_type = &const_pointer } } },
+        .{ .name = "const_nested", .type_expression = .{ .pointer_type = .{ .child_type = &mutable_pointer, .is_const = true } } },
+        .{ .name = "qualified", .type_expression = .{ .pointer_type = .{ .child_type = &qualified_type, .is_const = true } } },
+        .{ .name = "grouped", .type_expression = .{ .pointer_type = .{ .child_type = &grouped_type } } },
+    };
+    try expectRenderedFields(&fields,
+        \\pub const Generated = union(enum) {
+        \\    mutable: *u32,
+        \\    immutable: *const u32,
+        \\    optional_pointer: ?*u32,
+        \\    optional_const_pointer: ?*const u32,
+        \\    pointer_to_optional: *?u32,
+        \\    nested: **u32,
+        \\    nested_const: **const u32,
+        \\    const_nested: *const *u32,
+        \\    qualified: *const schema.Reading,
+        \\    grouped: *(u32),
+        \\};
+    );
 }
 
 test "address-of links the ampersand token to the referenced field expression" {
